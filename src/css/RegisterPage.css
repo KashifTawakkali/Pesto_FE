@@ -112,7 +112,38 @@ button {
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
+    border: 2px solid #ffffff;
+    position: relative;
+    overflow: hidden;
 }
+
+button.red-border {
+    border-color: red;
+    animation: borderAnimation 1s linear infinite;
+}
+
+button.green-border {
+    border-color: green;
+    animation: none; /* Remove animation */
+    color: white; /* Ensure text color is white */
+}
+
+/* Border animation */
+@keyframes borderAnimation {
+    0% {
+        border-color: red;
+        box-shadow: 0 0 5px red;
+    }
+    50% {
+        border-color: transparent;
+        box-shadow: 0 0 5px transparent;
+    }
+    100% {
+        border-color: red;
+        box-shadow: 0 0 5px red;
+    }
+}
+
 .social {
     margin-top: 30px;
     display: flex;

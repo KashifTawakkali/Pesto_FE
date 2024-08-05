@@ -1,64 +1,105 @@
-.task-board {
-    padding: 20px;
+.task-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 1000px;
+  padding: 20px;
+}
+
+.task-dashboard-heading {
+  font-size: 24px;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.task-boxes {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.task-box {
+  background-color: rgba(255, 255, 255, 0.13);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 23%;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.task-box:hover {
+  background-color: rgba(255, 255, 255, 0.27);
+}
+
+.task-chart {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.13);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  padding: 20px;
+}
+
+.task-chart table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #ffffff;
+}
+
+.task-chart th,
+.task-chart td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.task-chart th {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.task-chart select {
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+  border: none;
+  border-radius: 3px;
+  padding: 5px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .task-boxes {
+      flex-direction: column;
+      gap: 10px;
   }
-  
-  .create-task-button {
-    float: right;
-    margin-bottom: 20px;
+  .task-box {
+      width: 100%;
   }
-  
-  .popup-form {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
+  .task-chart {
+      padding: 10px;
   }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  .task-chart th,
+  .task-chart td {
+      padding: 5px;
   }
-  
-  thead th {
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-  
-  tbody td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-  
-  button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 12px;
-    margin: 2px 1px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  
-  button.delete {
-    background-color: #f44336;
-  }
-  
-  button.delete:hover {
-    background-color: #e41e1e;
-  }
-  
+}
