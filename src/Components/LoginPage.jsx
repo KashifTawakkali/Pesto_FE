@@ -1,24 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/LoginPage.css';
+import { loginUser } from "../API/controllers/loginController";
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [dialogVisible, setDialogVisible] = useState(false);
     const [, setClickedButton] = useState(null);
+    const [shouldSubmit, setShouldSubmit] = useState(false);
     const navigate = useNavigate();
 
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const validatePassword = (password) => {
-        return password.length >= 8;
-    };
+    const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const validatePassword = (password) => password.length >= 8;
 
     const showDialog = (buttonName) => {
         setClickedButton(buttonName);
@@ -26,7 +22,7 @@ const LoginForm = () => {
         setTimeout(() => {
             setDialogVisible(false);
             setClickedButton(null);
-        }, 3000); 
+        }, 3000);
     };
 
     const handleLogin = () => {
@@ -43,9 +39,29 @@ const LoginForm = () => {
         }
 
         if (valid) {
-            navigate('/dashboard'); 
+            setShouldSubmit(true);
         }
     };
+
+    useEffect(() => {
+        const login = async () => {
+            if (shouldSubmit) {
+                try {
+                    const formData = { email, password };
+                    await loginUser(formData); 
+                    toast.success('Login successful!');
+                    navigate('/dashboard');
+                } catch (error) {
+                    toast.error(error.message || 'Login failed.');
+                } finally {
+                    setShouldSubmit(false);
+                }
+            }
+        };
+    
+        login();
+    }, [shouldSubmit, email, password, navigate]);
+    
 
     const handleCloseDialog = () => {
         setDialogVisible(false);
@@ -75,7 +91,7 @@ const LoginForm = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="button" onClick={handleLogin}>Log In</button>
+                <button type="button" style={{color: "white"}} onClick={handleLogin}>Log In</button>
                 <div className="social">
                     <div className="go" onClick={() => showDialog('Google')}><i className="fab fa-google"></i> Google</div>
                     <div className="fb" onClick={() => showDialog('Facebook')}><i className="fab fa-facebook"></i> Facebook</div>

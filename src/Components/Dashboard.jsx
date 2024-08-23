@@ -1,16 +1,14 @@
-import  { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/Dashboard.css';
 
 const Dashboard = () => {
     const [dialogVisible, setDialogVisible] = useState(false);
-    const [clickedBox, setClickedBox] = useState(null);
+    const navigate = useNavigate();
 
     const handleBoxClick = (boxName) => {
         if (boxName === 'TTS') {
-            setClickedBox('TTS');
-            setTimeout(() => {
-                setClickedBox(null);
-            }, 5000);
+            navigate('/tasks'); 
         } else {
             setDialogVisible(true);
         }
@@ -31,12 +29,7 @@ const Dashboard = () => {
                 <div className="box" onClick={() => handleBoxClick('Check-In')}>Check-In</div>
                 <div className="box" onClick={() => handleBoxClick('Check-Out')}>Check-Out</div>
                 <div className="box" onClick={() => handleBoxClick('Attendance')}>Attendance</div>
-                <div
-                    className={`box ${clickedBox === 'TTS' ? 'clicked' : ''}`}
-                    onClick={() => handleBoxClick('TTS')}
-                >
-                    TTS
-                </div>
+                <div className="box" onClick={() => handleBoxClick('TTS')}>TTS</div>
                 <div className="box" onClick={() => handleBoxClick('Supervisor Panel')}>Supervisor Panel</div>
                 <div className="box" onClick={() => handleBoxClick('Admin Panel')}>Admin Panel</div>
             </div>

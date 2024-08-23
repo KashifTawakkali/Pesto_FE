@@ -37,6 +37,7 @@
   align-items: center;
   height: 100px;
   width: 23%;
+  margin: 10px;
   font-size: 18px;
   font-weight: 500;
   text-align: center;
@@ -56,6 +57,9 @@
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
   padding: 20px;
+  margin-top: 20px;
+  overflow-y: auto;
+  height: 200px;
 }
 
 .task-chart table {
@@ -86,20 +90,135 @@
   outline: none;
 }
 
+.delete-task-section {
+  display: flex;
+  justify-content: flex-end; /* Align items to the right */
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.delete-task-section input {
+  border: 1px solid #ccc;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  width: 200px; 
+  margin-right: 10px;
+  margin-top: 50px;
+}
+
+.delete-task-section button {
+  border: none;
+  cursor: pointer;
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 16px; /* Adjust font size to match input */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px; /* Set fixed width for button */
+  height: 50px; /* Set fixed height for button */
+}
+
+.delete-task-section button i {
+  font-size: 30px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .task-boxes {
-      flex-direction: column;
-      gap: 10px;
+    flex-direction: column;
+    gap: 10px;
   }
   .task-box {
-      width: 100%;
+    width: 100%;
   }
   .task-chart {
-      padding: 10px;
+    padding: 10px;
   }
   .task-chart th,
   .task-chart td {
-      padding: 5px;
+    padding: 5px;
+  }
+  .delete-task-section input,
+  .delete-task-section button {
+    width: 100%; /* Full width for smaller screens */
+    margin-right: 0; /* Remove margin on smaller screens */
+  }
+  .delete-task-section button {
+    width: 100%; /* Full width for smaller screens */
+    height: 40px; /* Adjust height */
+  }
+}
+
+.task-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.task-dashboard-heading {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.create-task-button {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  width: 180px; 
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  right: 0;
+}
+
+.create-task-button i {
+  margin-right: 10px; 
+}
+
+.create-task-button:hover {
+  background-color: #0056b3;
+}
+
+
+/* Mobile Adjustment */
+@media (max-width: 480px) {
+  .task-dashboard-heading {
+    font-size: 20px;
+  }
+  .task-box {
+    font-size: 16px;
+    height: 80px;
+  }
+  .task-chart th,
+  .task-chart td {
+    font-size: 12px;
+  }
+  .delete-task-section input {
+    font-size: 12px;
+    padding: 8px;
+  }
+  .delete-task-section button {
+    font-size: 14px;
+    padding: 8px;
   }
 }

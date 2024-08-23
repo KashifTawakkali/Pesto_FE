@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css'; 
 import '../css/RegisterPage.css';
+import { registerUser } from '../API/controllers/registerController'; 
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -38,11 +39,16 @@ const RegisterForm = () => {
         return true;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateForm()) {
-            //  navigate to login page
-            navigate('/login');
+            try {
+                await registerUser(formData);
+                toast.success('Registration successful!');
+                navigate('/login');
+            } catch (error) {
+                toast.error(error.message);
+            }
         }
     };
 
@@ -99,9 +105,9 @@ const RegisterForm = () => {
                 <div className="toggle-form">
                     Already have an account? <Link to="/login">Login here</Link>
                 </div>
-                <button type="submit">Register</button>
+                <button type="submit" style={{ color: 'white' }}>Register</button>
             </form>
-            <ToastContainer /> {/* Add ToastContainer */}
+            <ToastContainer />
         </div>
     );
 };
