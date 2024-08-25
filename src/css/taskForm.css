@@ -48,8 +48,9 @@
 }
 
 .form-buttons button {
-  padding: 10px 20px;
+  padding: 10px 10px;
   border: none;
+  margin: 10px;
   border-radius: 4px;
   cursor: pointer;
   background-color: #4caf50;
