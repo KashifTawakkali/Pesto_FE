@@ -1,35 +1,80 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TaskForm from './taskForm';
+import { getTask } from '../API/controllers/tasklistControllers';
+import { updateTask } from '../API/controllers/updateTaskController';
+import { deleteTask } from '../API/controllers/deleteController';
 import '../css/TaskList.css';
 
 const TaskDashboard = () => {
-    const [tasks, setTasks] = useState([
-        { no: 'TSK001', name: 'Task 1', status: 'Active' },
-        { no: 'TSK002', name: 'Task 2', status: 'On Hold' },
-        { no: 'TSK003', name: 'Task 3', status: 'Complete' },
-        { no: 'TSK004', name: 'Task 4', status: 'Active' },
-        { no: 'TSK005', name: 'Task 5', status: 'On Hold' },
-        { no: 'TSK006', name: 'Task 6', status: 'Complete' },
-    ]);
-
+    const [tasks, setTasks] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState('All');
     const [taskToDelete, setTaskToDelete] = useState('');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showTaskForm, setShowTaskForm] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const handleStatusChange = (taskNo, newStatus) => {
-        setTasks(tasks.map(task =>
-            task.no === taskNo ? { ...task, status: newStatus } : task
-        ));
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const data = await getTask();
+                setTasks(data);
+            } catch (error) {
+                console.error('Error fetching tasks:', error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchTasks();
+    }, []);
+
+    const handleDeleteTask = async () => {
+        try {
+            const formData = {
+                taskNumber: taskToDelete, // Pass taskNumber from the input field
+            };
+
+            const result = await deleteTask(formData);
+
+            if (result.success) {
+                setTasks(result.tasks); // Update the task list with the remaining tasks
+            }
+        } catch (error) {
+            console.error('Error deleting task:', error.message);
+        } finally {
+            setShowDeleteConfirm(false);
+            setTaskToDelete(''); // Clear the task number input
+        }
     };
 
-    const handleDeleteTask = () => {
-        setTasks(tasks.filter(task => task.no !== taskToDelete));
-        setTaskToDelete('');
-        setShowDeleteConfirm(false);
+    const handleStatusChange = async (taskNo, newStatus) => {
+        try {
+            const statusMapping = {
+                'New': 'New',
+                'Active': 'In Progress',
+                'On Hold': 'On Hold',
+                'Complete Task': 'Complete',
+                'Re-Open': 'Reopened'
+            };
+
+            const requestBody = {
+                taskNumber: taskNo,
+                status: statusMapping[newStatus],
+            };
+
+            await updateTask(requestBody);
+
+            setTasks(tasks.map(task =>
+                task.taskNumber === taskNo ? { ...task, status: newStatus } : task
+            ));
+        } catch (error) {
+            console.error('Error updating task:', error.message);
+        }
     };
 
-    const filteredTasks = selectedStatus === 'All' ? tasks : tasks.filter(task => task.status === selectedStatus);
+    const filteredTasks = tasks.filter(task =>
+        selectedStatus === 'All' ? true : task.status.toLowerCase() === selectedStatus.toLowerCase()
+    );
 
     const handleFormClose = () => {
         setShowTaskForm(false);
@@ -48,45 +93,59 @@ const TaskDashboard = () => {
                         <i className="fas fa-plus"></i> Create New Task
                     </button>
                 </div>
+
                 <div className="task-boxes">
-                    <div className="task-box" onClick={() => setSelectedStatus('New Task')}>New Task</div>
-                    <div className="task-box" onClick={() => setSelectedStatus('Active')}>Active Task</div>
-                    <div className="task-box" onClick={() => setSelectedStatus('On Hold')}>On Hold Task</div>
-                    <div className="task-box" onClick={() => setSelectedStatus('Complete')}>Complete Task</div>
+                    <div className="task-box" onClick={() => setSelectedStatus('new')}>New Task</div>
+                    <div className="task-box" onClick={() => setSelectedStatus('active')}>Active Task</div>
+                    <div className="task-box" onClick={() => setSelectedStatus('on hold')}>On Hold Task</div>
+                    <div className="task-box" onClick={() => setSelectedStatus('complete task')}>Complete Task</div>
                     <div className="task-box" onClick={() => setSelectedStatus('All')}>Show All</div>
                 </div>
-                <div className="task-chart">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Task No</th>
-                                <th>Task Name</th>
-                                <th>Task Action</th>
-                                <th>Task Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredTasks.map(task => (
-                                <tr key={task.no}>
-                                    <td>{task.no}</td>
-                                    <td>{task.name}</td>
-                                    <td>
-                                        <select
-                                            value={task.status}
-                                            onChange={(e) => handleStatusChange(task.no, e.target.value)}
-                                        >
-                                            <option value="Active">Active</option>
-                                            <option value="On Hold">On Hold</option>
-                                            <option value="Complete">Complete</option>
-                                            <option value="Re-Open">Re-Open</option>
-                                        </select>
-                                    </td>
-                                    <td>{task.status}</td>
+
+                {isLoading ? (
+                    <div className="loader">Loading tasks...</div>
+                ) : filteredTasks.length === 0 ? (
+                    <div className="no-task-message">
+                        No {selectedStatus} tasks available.
+                    </div>
+                ) : (
+                    <div className="task-chart">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Task No</th>
+                                    <th>Task Name</th>
+                                    <th>Task Description</th>
+                                    <th>Task Action</th>
+                                    <th>Task Status</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {filteredTasks.map(task => (
+                                    <tr key={task.taskNumber}>
+                                        <td>{task.taskNumber}</td>
+                                        <td>{task.taskName}</td>
+                                        <td>{task.taskDescription}</td>
+                                        <td>
+                                            <select
+                                                value={task.status}
+                                                onChange={(e) => handleStatusChange(task.taskNumber, e.target.value)}
+                                            >
+                                                <option value="New">New</option>
+                                                <option value="Active">Active</option>
+                                                <option value="On Hold">On Hold</option>
+                                                <option value="Complete Task">Complete Task</option>
+                                                <option value="Re-Open">Re-Open</option>
+                                            </select>
+                                        </td>
+                                        <td>{task.status}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
                 <div className="delete-task-section">
                     <input
                         type="text"
@@ -99,6 +158,7 @@ const TaskDashboard = () => {
                     </button>
                 </div>
             </div>
+
             {showTaskForm && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -106,12 +166,13 @@ const TaskDashboard = () => {
                     </div>
                 </div>
             )}
+
             {showDeleteConfirm && (
                 <div className="dialog-overlay">
                     <div className="dialog-box">
                         <p>Are you sure you want to delete task {taskToDelete}?</p>
                         <button onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-                        <button onClick={handleDeleteTask}>Delete</button>
+                        <button onClick={handleDeleteTask}>Delete</button> {/* Trigger delete on confirmation */}
                     </div>
                 </div>
             )}

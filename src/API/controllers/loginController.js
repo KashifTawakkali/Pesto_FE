@@ -1,19 +1,22 @@
 import axiosInstance from '../interceptor/Interceptor';
 
+import { toast } from "react-toastify";
+
 export const loginUser = async (formData) => {
+  const endpoint = "/auth/login";
+
   try {
-    const response = await axiosInstance.post('/auth/login', formData);
+    const response = await axiosInstance.post(endpoint, formData);
     const token = response.data.token;
 
-    // Store the token in sessionStorage
-    sessionStorage.setItem('token', token);
+    sessionStorage.setItem("token", token);
+
+    toast.success("Login successful");
 
     return response.data;
   } catch (error) {
-    if (error.response && error.response.data) {
-      throw new Error(error.response.data.message);
-    } else {
-      throw new Error('An error occurred during login.');
-    }
+    toast.error("Failed to log in", error);
+
+    throw error;
   }
 };
