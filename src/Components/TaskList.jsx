@@ -11,6 +11,7 @@ const TaskDashboard = () => {
     const [taskToDelete, setTaskToDelete] = useState('');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showTaskForm, setShowTaskForm] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -38,6 +39,7 @@ const TaskDashboard = () => {
 
             if (result.success) {
                 setTasks(result.tasks); // Update the task list with the remaining tasks
+                setShowSuccessPopup({ type: 'delete', visible: true });
             }
         } catch (error) {
             console.error('Error deleting task:', error.message);
@@ -67,6 +69,7 @@ const TaskDashboard = () => {
             setTasks(tasks.map(task =>
                 task.taskNumber === taskNo ? { ...task, status: newStatus } : task
             ));
+            setShowSuccessPopup({ type: 'update', visible: true });
         } catch (error) {
             console.error('Error updating task:', error.message);
         }
@@ -78,6 +81,12 @@ const TaskDashboard = () => {
 
     const handleFormClose = () => {
         setShowTaskForm(false);
+        setShowSuccessPopup({ type: 'create', visible: false });
+    };
+
+    const handleTaskCreated = () => {
+        setShowSuccessPopup({ type: 'create', visible: true });
+        setShowTaskForm(false);
     };
 
     return (
@@ -86,7 +95,7 @@ const TaskDashboard = () => {
                 <div className="shape"></div>
                 <div className="shape"></div>
             </div>
-            <div className={`task-dashboard-container ${showTaskForm ? 'blur-background' : ''}`}>
+            <div className={`task-dashboard-container ${showTaskForm || showSuccessPopup.visible ? 'blur-background' : ''}`}>
                 <div className="task-dashboard-header">
                     <h2 className="task-dashboard-heading">AMS (Attendance Management System)</h2>
                     <button className="create-task-button" onClick={() => setShowTaskForm(true)}>
@@ -162,7 +171,7 @@ const TaskDashboard = () => {
             {showTaskForm && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <TaskForm onClose={handleFormClose} />
+                        <TaskForm onClose={handleFormClose} onTaskCreated={handleTaskCreated} />
                     </div>
                 </div>
             )}
@@ -172,8 +181,19 @@ const TaskDashboard = () => {
                     <div className="dialog-box">
                         <p>Are you sure you want to delete task {taskToDelete}?</p>
                         <button onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-                        <button onClick={handleDeleteTask}>Delete</button> {/* Trigger delete on confirmation */}
+                        <button onClick={handleDeleteTask}>Delete</button> 
                     </div>
+                </div>
+            )}
+
+            {showSuccessPopup.visible && (
+                <div className="success-popup">
+                    <p>
+                        {showSuccessPopup.type === 'create' && 'Task created successfully!'}
+                        {showSuccessPopup.type === 'update' && 'Task updated successfully!'}
+                        {showSuccessPopup.type === 'delete' && 'Task deleted successfully!'}
+                    </p>
+                    <button onClick={() => setShowSuccessPopup({ type: '', visible: false })}>Close</button>
                 </div>
             )}
         </div>
